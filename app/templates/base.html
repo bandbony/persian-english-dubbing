@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}دوبله فارسی به انگلیسی{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #f7f7f5; --card: #fff; --text: #1d1d1b; --muted: #6b6b66; --line: #e3e3de;
+            --accent: #2457d6; --ok: #1a7f4b; --bad: #b42318; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #161615; --card: #20201e; --text: #ececea; --muted: #9a9a94; --line: #34342f;
+              --accent: #7aa2ff; --ok: #4cc38a; --bad: #ff8a80; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.7 Vazirmatn, system-ui, sans-serif; }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+    h1 { font-size: 22px; margin: 0 0 16px; }
+    h2 { font-size: 17px; margin: 24px 0 8px; }
+    a { color: var(--accent); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .muted { color: var(--muted); }
+    .ok { color: var(--ok); } .bad { color: var(--bad); }
+    button, .button { font: inherit; background: var(--accent); color: #fff; border: 0; border-radius: 8px;
+                      padding: 8px 16px; cursor: pointer; text-decoration: none; display: inline-block; }
+    button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+    input[type=file] { font: inherit; }
+    textarea { width: 100%; font: inherit; color: inherit; background: transparent; border: 1px solid var(--line);
+               border-radius: 6px; padding: 6px 8px; resize: vertical; }
+    textarea.en { direction: ltr; text-align: left; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: right; vertical-align: top; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+    td.time { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--muted); direction: ltr; text-align: left; }
+    .over { color: var(--bad); font-size: 12px; }
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    @media (max-width: 700px) { table, tbody, tr, td { display: block; } th { display: none; } td.time { text-align: right; } }
+  </style>
+</head>
+<body><main>{% block content %}{% endblock %}</main></body>
+</html>
