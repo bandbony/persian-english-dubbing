@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}{{ job.filename }}{% endblock %}
+{% block content %}
+<p><a href="/">← همه‌ی کارها</a></p>
+<h1>{{ job.filename }}</h1>
+
+<div class="card">
+  <div class="row">
+    <strong class="{{ 'ok' if job.status == 'done' else 'bad' if job.status == 'failed' else '' }}">{{ STATUS_FA[job.status] }}</strong>
+    <span class="muted" id="step">{{ job.step }}</span>
+  </div>
+  {% if job.status == 'failed' %}
+  <p class="bad" dir="auto">{{ job.error }}</p>
+  <form action="/jobs/{{ job.id }}/retry" method="post"><button>دوباره امتحان کن</button></form>
+  {% endif %}
+  {% if job.status == 'done' %}
+  <video src="/files/{{ job.id }}/{{ job.outputs.video }}" controls style="width:100%;margin-top:12px;border-radius:8px"></video>
+  <div class="row" style="margin-top:12px">
+    <a class="button" href="/files/{{ job.id }}/{{ job.outputs.video }}" download>دانلود ویدئوی دوبله‌شده</a>
+    <a href="/files/{{ job.id }}/{{ job.outputs.subtitles }}" download>زیرنویس انگلیسی (SRT)</a>
+    <a href="/files/{{ job.id }}/{{ job.outputs.audio }}" download>فقط صدای انگلیسی</a>
+  </div>
+  {% endif %}
+</div>
+
+{% if job.status == 'review' %}
+<form action="/jobs/{{ job.id }}/segments" method="post">
+  <div class="card">
+    <p class="muted">متن فارسی و ترجمه رو بررسی کن. اگه ترجمه‌ی یه خط رو کامل پاک کنی، اون خط دوبله نمیشه. عدد قرمز یعنی ترجمه برای زمانش بلنده و صدا سریع‌تر پخش میشه.</p>
+    <table>
+      <tr><th>زمان</th><th>فارسی</th><th>انگلیسی</th></tr>
+      {% for seg in job.segments %}
+      {% set budget = [8, (seg.duration * 15) | round | int] | max %}
+      <tr>
+        <td class="time">{{ "%.1f"|format(seg.start) }}–{{ "%.1f"|format(seg.end) }}s</td>
+        <td><textarea name="fa_{{ seg.id }}" rows="2">{{ seg.fa }}</textarea></td>
+        <td>
+          <textarea class="en" name="en_{{ seg.id }}" rows="2" data-budget="{{ budget }}">{{ seg.en }}</textarea>
+          <span class="over" dir="ltr"></span>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="row">
+    <label><input type="checkbox" name="lipsync" {{ 'checked' if job.lipsync }}> لب‌خوانی با sync.so</label>
+    <button class="secondary" name="action" value="save">ذخیره</button>
+    <button name="action" value="dub">ذخیره و شروع دوبله</button>
+  </div>
+</form>
+<script>
+  for (const box of document.querySelectorAll("textarea.en")) {
+    const note = box.nextElementSibling, budget = +box.dataset.budget;
+    const update = () => {
+      const n = box.value.length;
+      note.textContent = n > budget * 1.2 ? `${n}/${budget}` : "";
+    };
+    box.addEventListener("input", update); update();
+  }
+</script>
+{% elif job.status not in ('done', 'failed') %}
+<script>
+  // Refresh until the job needs the user or finishes.
+  setInterval(async () => {
+    const r = await fetch("/api/jobs/{{ job.id }}");
+    const j = await r.json();
+    if (j.status !== "{{ job.status.value }}") location.reload();
+    else document.getElementById("step").textContent = j.step;
+  }, 3000);
+</script>
+{% endif %}
+{% endblock %}
