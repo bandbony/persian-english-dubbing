@@ -20,6 +20,7 @@
     <a href="/files/{{ job.id }}/{{ job.outputs.subtitles }}" download>زیرنویس انگلیسی (SRT)</a>
     <a href="/files/{{ job.id }}/{{ job.outputs.audio }}" download>فقط صدای انگلیسی</a>
   </div>
+  {% if job.lipsync_seconds %}<p class="muted">لب‌خوانی روی {{ (job.lipsync_seconds / 60) | round(1) }} دقیقه از ویدئو انجام شد.</p>{% endif %}
   {% endif %}
 </div>
 
@@ -44,6 +45,7 @@
   </div>
   <div class="row">
     <label><input type="checkbox" name="lipsync" {{ 'checked' if job.lipsync }}> لب‌خوانی با sync.so</label>
+    <span class="muted">فقط بخش‌هایی که حرف زده میشه، حدود {{ (lipsync_estimate / 60) | round(1) }} دقیقه</span>
     <button class="secondary" name="action" value="save">ذخیره</button>
     <button name="action" value="dub">ذخیره و شروع دوبله</button>
   </div>

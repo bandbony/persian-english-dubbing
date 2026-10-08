@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     sync_api_key: str = ""
     sync_model: str = "lipsync-2"  # cheapest current model; "sync-3" or "lipsync-2-pro" for higher quality
     public_base_url: str = ""
+    # Parallel sync.so jobs; plans allow 1 (Hobbyist) to 15 (Scale).
+    sync_concurrency: int = 1
 
     # Timing: how much faster than normal a dubbed line may be played to fit its slot.
     max_speedup: float = 1.35

@@ -105,9 +105,9 @@ def dub(job: Job) -> None:
         base = s.public_base_url.rstrip("/")
         if not base:
             raise RuntimeError("Lip sync needs PUBLIC_BASE_URL so sync.so can download the files.")
-        out = lipsync.lipsync(
-            f"{base}/files/{job.id}/{video.name}", f"{base}/files/{job.id}/voice_en.wav",
-            work / "lipsync.mp4", s,
+        out, job.lipsync_seconds = lipsync.lipsync(
+            video, work / "voice_en.wav", placements, total, work,
+            lambda p: f"{base}/files/{job.id}/{p.name}", s,
         )
         # sync.so gets the voice alone, which lip syncs best; put the full mix and subtitles back on.
         output.mix(out, work / "voice_en.wav", background, subs, total,
