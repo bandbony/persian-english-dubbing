@@ -15,6 +15,7 @@ from .audio import SAMPLE_RATE
 class Placement:
     start: float   # seconds into the video
     speed: float   # playback speed, 1.0 = unchanged
+    length: float = 0.0  # seconds of audio after the speed change
 
 
 def plan(segments: list[Segment], clip_lengths: list[float], total: float, max_speedup: float) -> list[Placement]:
@@ -31,7 +32,7 @@ def plan(segments: list[Segment], clip_lengths: list[float], total: float, max_s
         next_start = segments[i + 1].start if i + 1 < len(segments) else total
         room = max(next_start - start, 0.05)
         speed = min(max(length / room, 1.0), max_speedup)
-        placements.append(Placement(start=round(start, 3), speed=round(speed, 3)))
+        placements.append(Placement(start=round(start, 3), speed=round(speed, 3), length=round(length / speed, 3)))
         cursor = start + length / speed
     return placements
 

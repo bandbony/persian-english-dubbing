@@ -35,6 +35,7 @@ class Job(BaseModel):
     lipsync: bool = False
     approved: bool = False     # the user reviewed the translation and started dubbing
     voice_id: str = ""
+    lipsync_seconds: float = 0.0  # video length sent to sync.so (what it bills for)
     segments: list[Segment] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     # Paths are relative to the job directory.

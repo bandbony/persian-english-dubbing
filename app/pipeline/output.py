@@ -22,7 +22,7 @@ def srt(segments: list[Segment], placements: list[Placement] | None = None) -> s
         start, end = seg.start, seg.end
         if placements:
             p = placements[n]
-            start, end = p.start, max(p.start + seg.duration / p.speed, seg.end)
+            start, end = p.start, max(p.start + p.length, seg.end)
             if n + 1 < len(placements):
                 end = min(end, placements[n + 1].start)
         blocks.append(f"{n + 1}\n{_ts(start)} --> {_ts(end)}\n{seg.en}\n")

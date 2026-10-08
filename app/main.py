@@ -1,5 +1,6 @@
 import base64
 import logging
+import re
 import secrets
 import shutil
 from contextlib import asynccontextmanager
@@ -12,6 +13,8 @@ from fastapi.templating import Jinja2Templates
 from . import store, worker
 from .config import get_settings
 from .models import Job, Status
+from .pipeline.align import Placement
+from .pipeline.lipsync import MERGE_GAP, speech_windows
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -86,7 +89,12 @@ def create_job(video: UploadFile = File(...), lipsync: bool = Form(False)):
 
 @app.get("/jobs/{job_id}")
 def job_page(request: Request, job_id: str):
-    return templates.TemplateResponse(request, "job.html", {"job": _job(job_id)})
+    job = _job(job_id)
+    # Rough lip sync length from the original timing, shown before the user starts dubbing.
+    rough = [Placement(start=s.start, speed=1.0, length=s.duration) for s in job.segments]
+    total = max((s.end for s in job.segments), default=0.0)
+    lipsync_estimate = sum(e - s for s, e in speech_windows(rough, total + 2 * MERGE_GAP))
+    return templates.TemplateResponse(request, "job.html", {"job": job, "lipsync_estimate": lipsync_estimate})
 
 
 @app.get("/api/jobs/{job_id}")
@@ -131,7 +139,7 @@ def retry(job_id: str):
 
 @app.get("/files/{job_id}/{name}")
 def files(job_id: str, name: str):
-    if name not in SERVABLE:
+    if name not in SERVABLE and not re.fullmatch(r"lip_in_\d{3}\.(mp4|wav)", name):
         raise HTTPException(404)
     _job(job_id)
     path = store.job_dir(job_id) / name
