@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>دوبله‌ی ویدئوی فارسی به انگلیسی</h1>
+
+<form class="card" action="/jobs" method="post" enctype="multipart/form-data">
+  <div class="row">
+    <input type="file" name="video" accept="video/*" required>
+    <label><input type="checkbox" name="lipsync"> لب‌خوانی با sync.so (هزینه‌ی جدا)</label>
+    <button type="submit">بارگذاری و شروع</button>
+  </div>
+  <p class="muted">بعد از تبدیل گفتار به متن و ترجمه، قبل از ساخت صدا متن و ترجمه رو می‌بینی و می‌تونی ویرایش کنی.</p>
+</form>
+
+<h2>کارها</h2>
+<div class="card">
+  {% if jobs %}
+  <table>
+    <tr><th>فایل</th><th>وضعیت</th><th>مرحله</th></tr>
+    {% for job in jobs %}
+    <tr>
+      <td><a href="/jobs/{{ job.id }}">{{ job.filename }}</a></td>
+      <td class="{{ 'ok' if job.status == 'done' else 'bad' if job.status == 'failed' else '' }}">{{ STATUS_FA[job.status] }}</td>
+      <td class="muted">{{ job.step }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="muted">هنوز ویدئویی بارگذاری نشده.</p>
+  {% endif %}
+</div>
+{% endblock %}

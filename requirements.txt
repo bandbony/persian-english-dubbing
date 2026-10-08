@@ -1,0 +1,12 @@
+anthropic>=1.12,<2
+openai>=3.26,<4
+httpx>=0.28
+fastapi>=0.143
+uvicorn[standard]>=0.54
+pydantic-settings>=2.15
+python-multipart>=0.0.32
+jinja2>=3.1
+numpy>=2.5
+soundfile>=0.14
+# Vocal separation (SEPARATOR=demucs). Pulls in PyTorch; runs on CPU, faster on a GPU.
+demucs>=4.0.1
